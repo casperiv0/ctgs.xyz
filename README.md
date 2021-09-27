@@ -1,12 +1,3 @@
-# Next.js + TypeScript + ESLint
+# ctgs.xyz
 
-A simple Next.js app template.
-
-## Includes
-
-- Next.js basics
-- TypeScript
-- Sass (scss modules)
-- ESLint
-- Prettier
-- React -> Preact on production build.
+Simple URL shortener made with TailwindCSS, Prisma and PlanetScale.
