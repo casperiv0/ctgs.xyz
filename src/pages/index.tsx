@@ -18,6 +18,7 @@ const INITIAL_VALUES = {
 export default function Home() {
   const [result, setResult] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<null | string>(null);
 
   const ref = React.useRef<HTMLInputElement>(null);
 
@@ -66,14 +67,17 @@ export default function Home() {
 
       if (typeof json === "string") {
         console.log(json);
+        setError(json);
       } else if (typeof json === "object") {
         const url = `https://ctgs.xyz/${json.slug}`;
         setResult(url);
       }
 
       setLoading(false);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+
+      setError(e.message);
       setLoading(false);
     }
   }
@@ -121,11 +125,15 @@ export default function Home() {
       </div>
 
       <div className="w-screen px-10 md:w-9/12 xl:w-3/6 xl:px-0">
-        <h1 className="text-2xl mb-5">Create a shortened URL!</h1>
+        <h1 className="text-2xl mb-3">Create a shortened URL!</h1>
 
         <Formik validate={validate} onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
           {({ handleSubmit, handleChange, handleBlur, errors, touched }) => (
             <form onSubmit={handleSubmit}>
+              {error ? (
+                <div className="bg-red-500 p-2 px-3 font-semibold rounded-md my-2">{error}</div>
+              ) : null}
+
               <FormField label="Enter URL">
                 <Input
                   hasError={!!errors.url}

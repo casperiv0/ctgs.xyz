@@ -18,9 +18,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const [error] = await validateSchema(schema, body);
 
   if (error) {
-    return res.status(400).json({
-      error: error.message,
-    });
+    return res.status(400).send(error.message);
+  }
+
+  const existing = await prisma.url.findUnique({
+    where: {
+      slug: body.slug,
+    },
+  });
+
+  if (existing) {
+    return res.status(400).send("URL with that slug already exists.");
   }
 
   const data = await prisma.url.create({
