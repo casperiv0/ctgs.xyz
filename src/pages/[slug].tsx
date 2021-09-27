@@ -2,17 +2,12 @@ import * as React from "react";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
-// import { getThemeFromLocal, updateBodyClass } from "lib/theme";
 
 interface Props {
   data: string;
 }
 
 export default function Slug({ data }: Props) {
-  //   React.useEffect(() => {
-  //     updateBodyClass(getThemeFromLocal());
-  //   }, []);
-
   return (
     <div className="bg-gray-50 dark:bg-gray-800 dark:text-gray-300 h-screen flex flex-col justify-center items-center">
       <Head>

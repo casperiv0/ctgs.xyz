@@ -1,12 +1,11 @@
 import * as React from "react";
 import Head from "next/head";
 import { Formik } from "formik";
+import { Moon, Sun } from "react-bootstrap-icons";
 
 import { validate } from "lib/validate";
 
-// import { getThemeFromLocal, Theme, updateBodyClass, updateLocalTheme } from "lib/theme";
-// import { MoonIcon } from "icons/MoonIcon";
-// import { SunIcon } from "icons/Sun";
+import { getThemeFromLocal, Theme, updateBodyClass, updateLocalTheme } from "lib/theme";
 import { FormField } from "components/FormField";
 import { Error } from "components/Error";
 import { Input } from "components/Input";
@@ -22,24 +21,36 @@ export default function Home() {
 
   const ref = React.useRef<HTMLInputElement>(null);
 
-  // const [theme, setTheme] = React.useState<Theme>("dark");
+  const [theme, setTheme] = React.useState<Theme>("dark");
 
-  // React.useEffect(() => {
-  //   ref.current?.focus();
-  // }, []);
+  React.useEffect(() => {
+    ref.current?.focus();
+  }, []);
 
-  // React.useEffect(() => {
-  //   const t = getThemeFromLocal();
+  React.useEffect(() => {
+    const t = getThemeFromLocal();
 
-  //   setTheme(t);
-  //   updateBodyClass(t);
-  // }, []);
+    setTheme(t);
+    updateBodyClass(t);
+  }, []);
 
-  // function handleThemeChange() {
-  //   const newTheme = theme === "dark" ? "light" : "dark";
-  //   setTheme(newTheme);
-  //   updateLocalTheme(newTheme);
-  // }
+  function handleThemeChange() {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    updateLocalTheme(newTheme);
+  }
+
+  function handleCopy(e: React.MouseEvent<HTMLSpanElement, MouseEvent>) {
+    if (!result) return;
+    const element = e.currentTarget;
+
+    navigator.clipboard.writeText(result);
+    element.innerText = "Copied!";
+
+    setTimeout(() => {
+      element.innerText = "Copy";
+    }, 1_000);
+  }
 
   async function onSubmit(data: typeof INITIAL_VALUES) {
     setResult(null);
@@ -68,34 +79,25 @@ export default function Home() {
   return (
     <div className="bg-gray-50 dark:bg-gray-800 text-black dark:text-gray-300 h-screen flex items-center justify-center w-screen">
       <Head>
-        <title>FaunaDB URL shortener</title>
+        <title>ctgs.xyz</title>
 
-        <meta name="twitter:title" content="FaunaDB URL shortener" />
-        <meta property="og:site_name" content="FaunaDB URL shortener" />
-        <meta property="og:title" content="FaunaDB URL shortener" />
+        <meta name="twitter:title" content="ctgs.xyz" />
+        <meta property="og:site_name" content="ctgs.xyz" />
+        <meta property="og:title" content="ctgs.xyz" />
 
-        <meta
-          name="description"
-          content="A simple FaunaDB, tailwindcss and next.js URL shortener"
-        />
-        <meta
-          property="og:description"
-          content="A simple FaunaDB, tailwindcss and next.js URL shortener"
-        />
-        <meta
-          name="twitter:description"
-          content="A simple FaunaDB, tailwindcss and next.js URL shortener"
-        />
+        <meta name="description" content="Create a shortened URL." />
+        <meta property="og:description" content="Create a shortened URL." />
+        <meta name="twitter:description" content="Create a shortened URL." />
 
-        <link rel="canonical" href="https://ctgs.ga" />
-        <meta property="og:url" content="https://ctgs.ga" />
+        <link rel="canonical" href="https://ctgs.xyz" />
+        <meta property="og:url" content="https://ctgs.xyz" />
       </Head>
 
       <div className="absolute top-5 left-5">
         <a
           rel="noopener noreferrer"
           target="_blank"
-          href="https://github.com/Dev-CasperTheGhost/nextjs-faunadb-url-shortener"
+          href="https://github.com/Dev-CasperTheGhost/ctgs.xyz"
           className="py-2 px-3 bg-gray-600 dark:bg-gray-700 text-white rounded-md"
         >
           Source code
@@ -104,15 +106,15 @@ export default function Home() {
 
       <div className="absolute top-5 right-5">
         <button
-          // aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
-          // onClick={handleThemeChange}
+          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
+          onClick={handleThemeChange}
           className="p-2"
         >
-          {/* {theme === "light" ? (
-            <MoonIcon className="fill-current text-gray-700 " width="20px" height="20px" />
+          {theme === "light" ? (
+            <Moon className="fill-current text-gray-700 " width="20px" height="20px" />
           ) : (
-            <SunIcon className="fill-current text-white" width="20px" height="20px" />
-          )} */}
+            <Sun className="fill-current text-white" width="20px" height="20px" />
+          )}
         </button>
       </div>
 
@@ -129,6 +131,7 @@ export default function Home() {
                   type="url"
                   id="url"
                   placeholder="URL"
+                  name="url"
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
@@ -141,13 +144,35 @@ export default function Home() {
                   type="text"
                   id="slug"
                   placeholder="Slug"
+                  name="slug"
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
                 <Error touched={touched.slug}>{errors.slug}</Error>
               </FormField>
 
-              <div className="flex justify-end">
+              <div className="flex justify-between">
+                <div>
+                  <span className="font-semibold">Shortened URL: </span>
+                  {result ? (
+                    <>
+                      <a
+                        className="hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={result}
+                      >
+                        {result}
+                      </a>
+                      <span
+                        className="text-sm ml-2 text-white dark:text-gray-300 bg-gray-600 dark:bg-gray-700 p-0.5 px-1 rounded cursor-pointer"
+                        onClick={handleCopy}
+                      >
+                        Copy
+                      </span>
+                    </>
+                  ) : null}
+                </div>
                 <button
                   type="submit"
                   disabled={loading}
@@ -161,41 +186,6 @@ export default function Home() {
             </form>
           )}
         </Formik>
-
-        <form>
-          <div className="flex justify-between">
-            <div>
-              Shortened URL:{" "}
-              {result ? (
-                <>
-                  <a
-                    className="hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={result}
-                  >
-                    {result}
-                  </a>
-                  <span
-                    className="text-sm ml-2 text-white dark:text-gray-300 bg-gray-600 dark:bg-gray-700 p-0.5 px-1 rounded cursor-pointer"
-                    onClick={(e) => {
-                      const element = e.currentTarget;
-
-                      navigator.clipboard.writeText(result);
-                      element.innerText = "Copied!";
-
-                      setTimeout(() => {
-                        element.innerText = "Copy";
-                      }, 600);
-                    }}
-                  >
-                    Copy
-                  </span>
-                </>
-              ) : null}
-            </div>
-          </div>
-        </form>
       </div>
     </div>
   );
