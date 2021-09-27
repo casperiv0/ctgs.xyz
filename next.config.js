@@ -4,7 +4,7 @@
  * @type {import("next/dist/server/config-shared").NextConfig}
  */
 module.exports = {
-  cleanDistDir: true,
+  experimental: { esmExternals: true },
   reactStrictMode: true,
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
