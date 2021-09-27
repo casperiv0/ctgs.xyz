@@ -30,14 +30,3 @@ export function updateBodyClass(theme: Theme) {
     document.body.classList.remove("dark");
   }
 }
-
-export const THEME_SCRIPT = `
-   try {
-    const LOCAL_THEME_KEY = "ctgs.xyz_theme";
-    ${updateBodyClass.toString()}
-
-    ${getThemeFromLocal.toString()}
-
-    updateBodyClass(getThemeFromLocal())
-   } catch{}
-`;

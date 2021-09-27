@@ -6,13 +6,13 @@ generator client {
 datasource db {
     provider             = "mysql"
     url                  = env("DATABASE_URL")
-    shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+    shadowDatabaseUrl    = env("SHADOW_DATABASE_URL")
     referentialIntegrity = "prisma"
 }
 
 model Url {
     id     String @id @default(cuid())
-    slug   String @unique
-    url    String
+    slug   String @unique @db.VarChar(255)
+    url    String @db.Text
     clicks Int    @default(0)
 }

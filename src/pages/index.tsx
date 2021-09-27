@@ -31,6 +31,7 @@ export default function Home() {
     const t = getThemeFromLocal();
 
     setTheme(t);
+    updateLocalTheme(t);
     updateBodyClass(t);
   }, []);
 
@@ -66,7 +67,8 @@ export default function Home() {
       if (typeof json === "string") {
         console.log(json);
       } else if (typeof json === "object") {
-        setResult(json.url!);
+        const url = `https://ctgs.xyz/${json.slug}`;
+        setResult(url);
       }
 
       setLoading(false);
