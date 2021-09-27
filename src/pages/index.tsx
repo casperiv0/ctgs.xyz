@@ -151,7 +151,7 @@ export default function Home() {
                 <Error touched={touched.slug}>{errors.slug}</Error>
               </FormField>
 
-              <div className="flex justify-between">
+              <div className="flex items-center justify-between">
                 <div>
                   <span className="font-semibold">Shortened URL: </span>
                   {result ? (
@@ -173,15 +173,18 @@ export default function Home() {
                     </>
                   ) : null}
                 </div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className={`p-2 px-4 text-white rounded-md bg-gray-600 dark:bg-gray-700 dark:focus:ring-2 dark:focus:ring-white self-end transition-all ${
-                    loading ? "cursor-not-allowed opacity-70" : "cursor-pointer"
-                  }`}
-                >
-                  {loading ? "loading..." : "Create!"}
-                </button>
+
+                <div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className={`p-2 px-4 text-white rounded-md bg-gray-600 dark:bg-gray-700 dark:focus:ring-2 dark:focus:ring-white self-end transition-all ${
+                      loading ? "cursor-not-allowed opacity-70" : "cursor-pointer"
+                    }`}
+                  >
+                    {loading ? "loading..." : "Create!"}
+                  </button>
+                </div>
               </div>
             </form>
           )}
