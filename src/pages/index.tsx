@@ -9,6 +9,7 @@ import { getThemeFromLocal, Theme, updateBodyClass, updateLocalTheme } from "lib
 import { FormField } from "components/FormField";
 import { Error } from "components/Error";
 import { Input } from "components/Input";
+import { useRouter } from "next/dist/client/router";
 
 const INITIAL_VALUES = {
   url: "",
@@ -16,13 +17,13 @@ const INITIAL_VALUES = {
 };
 
 export default function Home() {
+  const router = useRouter();
   const [result, setResult] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<null | string>(null);
+  const [theme, setTheme] = React.useState<Theme>("dark");
 
   const ref = React.useRef<HTMLInputElement>(null);
-
-  const [theme, setTheme] = React.useState<Theme>("dark");
 
   React.useEffect(() => {
     ref.current?.focus();
@@ -125,7 +126,14 @@ export default function Home() {
       </div>
 
       <div className="w-screen px-10 md:w-9/12 xl:w-3/6 xl:px-0">
-        <h1 className="text-2xl mb-3">Create a shortened URL!</h1>
+        {router.query.fromGa ? (
+          <div className="text-lg bg-gray-300 dark:bg-gray-700 my-5 rounded-md p-2 px-3">
+            <span className="font-semibold">ctgs.ga</span> has moved to{" "}
+            <span className="font-semibold">ctgs.xyz</span>!
+          </div>
+        ) : null}
+
+        <h1 className="text-3xl mb-3 font-semibold">Create a shortened URL!</h1>
 
         <Formik validate={validate} onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
           {({ handleSubmit, handleChange, handleBlur, errors, touched }) => (
