@@ -1,6 +1,6 @@
 import * as React from "react";
 import Head from "next/head";
-import { Formik } from "formik";
+import { Formik, FormikHelpers } from "formik";
 
 import { validate } from "lib/validate";
 
@@ -30,7 +30,10 @@ export default function Home() {
     urlRef.current?.focus();
   }, []);
 
-  async function onSubmit(data: typeof INITIAL_VALUES) {
+  async function onSubmit(
+    data: typeof INITIAL_VALUES,
+    helpers: FormikHelpers<typeof INITIAL_VALUES>,
+  ) {
     setResult(null);
     setError(null);
 
@@ -50,6 +53,8 @@ export default function Home() {
       } else if (typeof json === "object") {
         const url = `https://ctgs.xyz/${json.slug}`;
         setResult(url);
+
+        helpers.resetForm();
       }
 
       setLoading(false);
@@ -89,7 +94,7 @@ export default function Home() {
         <h1 className="text-xl sm:text-2xl md:text-3xl mb-3 font-semibold">Shorten your URL!</h1>
 
         <Formik validate={validate} onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
-          {({ handleSubmit, handleChange, handleBlur, errors, touched, isValid }) => (
+          {({ handleSubmit, handleChange, handleBlur, values, errors, touched, isValid }) => (
             <form onSubmit={handleSubmit}>
               {error ? (
                 <div className="bg-red-500 text-white p-2 px-3 font-semibold rounded-md my-2">
@@ -107,6 +112,7 @@ export default function Home() {
                   name="url"
                   onChange={handleChange}
                   onBlur={handleBlur}
+                  value={values.url}
                 />
                 <Error touched={touched.url}>{errors.url}</Error>
               </FormField>
@@ -122,6 +128,7 @@ export default function Home() {
                     name="slug"
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    value={values.slug}
                   />
 
                   <Button
@@ -152,12 +159,14 @@ export default function Home() {
                       >
                         {result}
                       </a>
-                      <span
-                        className="text-sm ml-2 text-white dark:text-gray-300 bg-gray-600 dark:bg-gray-700 p-0.5 px-1 rounded cursor-pointer"
+                      <Button
+                        type="button"
+                        small
+                        className="ml-2 text-sm"
                         onClick={(e) => handleCopy(result, e)}
                       >
                         Copy
-                      </span>
+                      </Button>
                     </>
                   ) : null}
                 </div>
