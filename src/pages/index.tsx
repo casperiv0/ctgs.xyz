@@ -132,7 +132,9 @@ export default function Home() {
           {({ handleSubmit, handleChange, handleBlur, errors, touched, isValid }) => (
             <form onSubmit={handleSubmit}>
               {error ? (
-                <div className="bg-red-500 p-2 px-3 font-semibold rounded-md my-2">{error}</div>
+                <div className="bg-red-500 text-white p-2 px-3 font-semibold rounded-md my-2">
+                  {error}
+                </div>
               ) : null}
 
               <FormField label="Enter URL">
