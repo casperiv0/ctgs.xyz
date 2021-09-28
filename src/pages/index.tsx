@@ -1,17 +1,16 @@
 import * as React from "react";
 import Head from "next/head";
 import { Formik } from "formik";
-import { Moon, Sun } from "react-bootstrap-icons";
 
 import { validate } from "lib/validate";
 
-import { getThemeFromLocal, Theme, updateBodyClass, updateLocalTheme } from "lib/theme";
 import { FormField } from "components/FormField";
 import { Error } from "components/Error";
 import { Input } from "components/Input";
 import { useRouter } from "next/dist/client/router";
 import { handleCopy, handleGenerate } from "lib/utils";
 import { Loader } from "components/Loader";
+import { Button } from "components/Button";
 
 const INITIAL_VALUES = {
   url: "",
@@ -23,7 +22,6 @@ export default function Home() {
   const [result, setResult] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<null | string>(null);
-  const [theme, setTheme] = React.useState<Theme>("dark");
 
   const urlRef = React.useRef<HTMLInputElement>(null);
   const slugRef = React.useRef<HTMLInputElement>(null);
@@ -31,20 +29,6 @@ export default function Home() {
   React.useEffect(() => {
     urlRef.current?.focus();
   }, []);
-
-  React.useEffect(() => {
-    const t = getThemeFromLocal();
-
-    setTheme(t);
-    updateLocalTheme(t);
-    updateBodyClass(t);
-  }, []);
-
-  function handleThemeChange() {
-    const newTheme = theme === "dark" ? "light" : "dark";
-    setTheme(newTheme);
-    updateLocalTheme(newTheme);
-  }
 
   async function onSubmit(data: typeof INITIAL_VALUES) {
     setResult(null);
@@ -78,7 +62,7 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-800 text-black dark:text-gray-300 h-screen flex items-center justify-center w-screen">
+    <div className="bg-gray-50 dark:bg-dark-gray text-black dark:text-gray-300 h-screen flex items-center justify-center w-screen">
       <Head>
         <title>ctgs.xyz</title>
 
@@ -94,32 +78,7 @@ export default function Home() {
         <meta property="og:url" content="https://ctgs.xyz" />
       </Head>
 
-      <div className="absolute top-5 left-5">
-        <a
-          rel="noopener noreferrer"
-          target="_blank"
-          href="https://github.com/Dev-CasperTheGhost/ctgs.xyz"
-          className="py-2 px-3 bg-gray-600 dark:bg-gray-700 text-white rounded-md"
-        >
-          Source code
-        </a>
-      </div>
-
-      <div className="absolute top-5 right-5">
-        <button
-          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
-          onClick={handleThemeChange}
-          className="p-2"
-        >
-          {theme === "light" ? (
-            <Moon className="fill-current text-gray-700 " width="20px" height="20px" />
-          ) : (
-            <Sun className="fill-current text-white" width="20px" height="20px" />
-          )}
-        </button>
-      </div>
-
-      <div className="w-screen px-10 max-w-3xl xl:w-3/6 xl:px-0">
+      <main className="w-screen px-10 max-w-3xl xl:w-3/6 xl:px-0">
         {router.query.fromGa ? (
           <div className="text-lg bg-gray-300 dark:bg-gray-700 my-5 rounded-md p-2 px-3">
             <span className="font-semibold">ctgs.ga</span> has moved to{" "}
@@ -127,7 +86,7 @@ export default function Home() {
           </div>
         ) : null}
 
-        <h1 className="text-xl sm:text-2xl md:text-3xl mb-3 font-semibold">Shorten you URL!</h1>
+        <h1 className="text-xl sm:text-2xl md:text-3xl mb-3 font-semibold">Shorten your URL!</h1>
 
         <Formik validate={validate} onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
           {({ handleSubmit, handleChange, handleBlur, errors, touched, isValid }) => (
@@ -165,16 +124,16 @@ export default function Home() {
                     onBlur={handleBlur}
                   />
 
-                  <button
+                  <Button
                     type="button"
+                    small
                     onClick={() => slugRef.current && handleGenerate(slugRef.current, handleChange)}
                     className={`
-                      p-0.5 px-2 bg-gray-300 dark:bg-gray-800 rounded-md absolute
-                      top-1/2 right-2 -translate-y-1/2
+                     absolute top-1/2 right-2 -translate-y-1/2
                   `}
                   >
                     generate
-                  </button>
+                  </Button>
                 </div>
 
                 <Error touched={touched.slug}>{errors.slug}</Error>
@@ -203,22 +162,14 @@ export default function Home() {
                   ) : null}
                 </div>
 
-                <div>
-                  <button
-                    type="submit"
-                    disabled={loading || !isValid}
-                    className={`p-2 px-4 text-white rounded-md bg-gray-600 dark:bg-gray-700 dark:focus:ring-2 dark:focus:ring-white self-end transition-all disabled:opacity-60 disabled:cursor-not-allowed ${
-                      loading ? "cursor-not-allowed opacity-70" : "cursor-pointer"
-                    }`}
-                  >
-                    {loading ? <Loader /> : "Create!"}
-                  </button>
-                </div>
+                <Button type="submit" disabled={loading || !isValid}>
+                  {loading ? <Loader /> : "Shorten!"}
+                </Button>
               </div>
             </form>
           )}
         </Formik>
-      </div>
+      </main>
     </div>
   );
 }
