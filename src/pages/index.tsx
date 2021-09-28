@@ -10,6 +10,8 @@ import { FormField } from "components/FormField";
 import { Error } from "components/Error";
 import { Input } from "components/Input";
 import { useRouter } from "next/dist/client/router";
+import { handleCopy } from "lib/utils";
+import { Loader } from "components/Loader";
 
 const INITIAL_VALUES = {
   url: "",
@@ -43,25 +45,16 @@ export default function Home() {
     updateLocalTheme(newTheme);
   }
 
-  function handleCopy(e: React.MouseEvent<HTMLSpanElement, MouseEvent>) {
-    if (!result) return;
-    const element = e.currentTarget;
-
-    navigator.clipboard.writeText(result);
-    element.innerText = "Copied!";
-
-    setTimeout(() => {
-      element.innerText = "Copy";
-    }, 1_000);
-  }
-
   async function onSubmit(data: typeof INITIAL_VALUES) {
     setResult(null);
+    setError(null);
 
     try {
+      setLoading(true);
       const res = await fetch("/api/new", {
         method: "POST",
         body: JSON.stringify(data),
+        credentials: "omit",
       });
 
       const json: Record<string, string> | string = await (res.ok ? res.json() : res.text());
@@ -136,7 +129,7 @@ export default function Home() {
         <h1 className="text-3xl mb-3 font-semibold">Create a shortened URL!</h1>
 
         <Formik validate={validate} onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
-          {({ handleSubmit, handleChange, handleBlur, errors, touched }) => (
+          {({ handleSubmit, handleChange, handleBlur, errors, touched, isValid }) => (
             <form onSubmit={handleSubmit}>
               {error ? (
                 <div className="bg-red-500 p-2 px-3 font-semibold rounded-md my-2">{error}</div>
@@ -184,7 +177,7 @@ export default function Home() {
                       </a>
                       <span
                         className="text-sm ml-2 text-white dark:text-gray-300 bg-gray-600 dark:bg-gray-700 p-0.5 px-1 rounded cursor-pointer"
-                        onClick={handleCopy}
+                        onClick={(e) => handleCopy(result, e)}
                       >
                         Copy
                       </span>
@@ -195,12 +188,12 @@ export default function Home() {
                 <div>
                   <button
                     type="submit"
-                    disabled={loading}
-                    className={`p-2 px-4 text-white rounded-md bg-gray-600 dark:bg-gray-700 dark:focus:ring-2 dark:focus:ring-white self-end transition-all ${
+                    disabled={loading || !isValid}
+                    className={`p-2 px-4 text-white rounded-md bg-gray-600 dark:bg-gray-700 dark:focus:ring-2 dark:focus:ring-white self-end transition-all disabled:opacity-60 disabled:cursor-not-allowed ${
                       loading ? "cursor-not-allowed opacity-70" : "cursor-pointer"
                     }`}
                   >
-                    {loading ? "loading..." : "Create!"}
+                    {loading ? <Loader /> : "Create!"}
                   </button>
                 </div>
               </div>
