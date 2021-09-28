@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import * as yup from "yup";
 import { validateSchema } from "@casper124578/utils";
 import { prisma } from "lib/prisma";
+import slugify from "slugify";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const schema = {
@@ -21,9 +22,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).send(error.message);
   }
 
+  if (body.url.includes(process.env.NEXT_PUBLIC_PROD_URL)) {
+    return res.status(400).send("Cannot use this URL");
+  }
+
+  const slugified = slugify(body.slug, {
+    replacement: "-",
+    lower: true,
+    remove: /[*./]/,
+  });
+
   const existing = await prisma.url.findUnique({
     where: {
-      slug: body.slug,
+      slug: slugified,
     },
   });
 
@@ -33,7 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const data = await prisma.url.create({
     data: {
-      slug: body.slug,
+      slug: slugified,
       url: body.url,
     },
   });
