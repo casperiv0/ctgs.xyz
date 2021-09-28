@@ -78,7 +78,7 @@ export default function Home() {
         <meta property="og:url" content="https://ctgs.xyz" />
       </Head>
 
-      <main className="w-screen px-10 max-w-3xl xl:w-3/6 xl:px-0">
+      <main className="w-screen px-5 max-w-3xl xl:w-3/6 xl:px-0">
         {router.query.fromGa ? (
           <div className="text-lg bg-gray-300 dark:bg-gray-700 my-5 rounded-md p-2 px-3">
             <span className="font-semibold">ctgs.ga</span> has moved to{" "}
