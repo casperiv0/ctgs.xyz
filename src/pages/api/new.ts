@@ -1,8 +1,8 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import * as yup from "yup";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { validateSchema } from "@casper124578/utils";
-import { prisma } from "lib/prisma";
 import slugify from "slugify";
+import { prisma } from "lib/prisma";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const schema = {

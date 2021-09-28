@@ -1,5 +1,5 @@
 import * as React from "react";
-import { GetServerSideProps } from "next";
+import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -35,9 +35,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   // url was found
   if (res.slug && res.id) {
-    ctx.res.setHeader("location", res.url);
-    ctx.res.statusCode = 301;
-    ctx.res.end();
+    return {
+      redirect: {
+        destination: res.url,
+        permanent: true,
+      },
+    };
   }
 
   return {

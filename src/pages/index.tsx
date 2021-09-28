@@ -10,7 +10,7 @@ import { FormField } from "components/FormField";
 import { Error } from "components/Error";
 import { Input } from "components/Input";
 import { useRouter } from "next/dist/client/router";
-import { handleCopy } from "lib/utils";
+import { handleCopy, handleGenerate } from "lib/utils";
 import { Loader } from "components/Loader";
 
 const INITIAL_VALUES = {
@@ -25,10 +25,11 @@ export default function Home() {
   const [error, setError] = React.useState<null | string>(null);
   const [theme, setTheme] = React.useState<Theme>("dark");
 
-  const ref = React.useRef<HTMLInputElement>(null);
+  const urlRef = React.useRef<HTMLInputElement>(null);
+  const slugRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
-    ref.current?.focus();
+    urlRef.current?.focus();
   }, []);
 
   React.useEffect(() => {
@@ -118,7 +119,7 @@ export default function Home() {
         </button>
       </div>
 
-      <div className="w-screen px-10 md:w-9/12 xl:w-3/6 xl:px-0">
+      <div className="w-screen px-10 max-w-3xl xl:w-3/6 xl:px-0">
         {router.query.fromGa ? (
           <div className="text-lg bg-gray-300 dark:bg-gray-700 my-5 rounded-md p-2 px-3">
             <span className="font-semibold">ctgs.ga</span> has moved to{" "}
@@ -126,7 +127,7 @@ export default function Home() {
           </div>
         ) : null}
 
-        <h1 className="text-3xl mb-3 font-semibold">Create a shortened URL!</h1>
+        <h1 className="text-xl sm:text-2xl md:text-3xl mb-3 font-semibold">Shorten you URL!</h1>
 
         <Formik validate={validate} onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
           {({ handleSubmit, handleChange, handleBlur, errors, touched, isValid }) => (
@@ -140,7 +141,7 @@ export default function Home() {
               <FormField label="Enter URL">
                 <Input
                   hasError={!!errors.url}
-                  ref={ref}
+                  ref={urlRef}
                   type="url"
                   id="url"
                   placeholder="URL"
@@ -152,15 +153,30 @@ export default function Home() {
               </FormField>
 
               <FormField label="Enter slug">
-                <Input
-                  hasError={!!errors.slug}
-                  type="text"
-                  id="slug"
-                  placeholder="Slug"
-                  name="slug"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
+                <div className="relative w-full">
+                  <Input
+                    ref={slugRef}
+                    hasError={!!errors.slug}
+                    type="text"
+                    id="slug"
+                    placeholder="Slug"
+                    name="slug"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => slugRef.current && handleGenerate(slugRef.current, handleChange)}
+                    className={`
+                      p-0.5 px-2 bg-gray-300 dark:bg-gray-800 rounded-md absolute
+                      top-1/2 right-2 -translate-y-1/2
+                  `}
+                  >
+                    generate
+                  </button>
+                </div>
+
                 <Error touched={touched.slug}>{errors.slug}</Error>
               </FormField>
 
