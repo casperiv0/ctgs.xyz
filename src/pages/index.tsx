@@ -1,16 +1,18 @@
 import * as React from "react";
+import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import { Formik, FormikHelpers } from "formik";
-
-import { validate } from "lib/validate";
+import { useRouter } from "next/router";
 
 import { FormField } from "components/FormField";
 import { Error } from "components/Error";
 import { Input } from "components/Input";
-import { useRouter } from "next/dist/client/router";
-import { handleCopy, handleGenerate } from "lib/utils";
 import { Loader } from "components/Loader";
 import { Button } from "components/Button";
+
+import { handleCopy, handleGenerate } from "lib/utils";
+import { validate } from "lib/validate";
+import { getSession } from "lib/auth/server";
 
 const INITIAL_VALUES = {
   url: "",
@@ -42,13 +44,12 @@ export default function Home() {
       const res = await fetch("/api/new", {
         method: "POST",
         body: JSON.stringify(data),
-        credentials: "omit",
       });
 
       const json: Record<string, string> | string = await (res.ok ? res.json() : res.text());
 
       if (typeof json === "string") {
-        console.log(json);
+        console.error(json);
         setError(json);
       } else if (typeof json === "object") {
         const url = `https://ctgs.xyz/${json.slug}`;
@@ -59,7 +60,7 @@ export default function Home() {
 
       setLoading(false);
     } catch (e: any) {
-      console.log(e);
+      console.error(e);
 
       setError(e.message);
       setLoading(false);
@@ -182,3 +183,11 @@ export default function Home() {
     </div>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  return {
+    props: {
+      session: await getSession(req),
+    },
+  };
+};

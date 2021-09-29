@@ -1,10 +1,15 @@
 import * as React from "react";
+import Link from "next/link";
+import { useSession } from "lib/auth/client";
 import { Moon, Sun } from "react-bootstrap-icons";
 import { getThemeFromLocal, Theme, updateBodyClass, updateLocalTheme } from "lib/theme";
 import { Button } from "./Button";
+import { useRouter } from "next/dist/client/router";
 
 export const Header = () => {
   const [theme, setTheme] = React.useState<Theme>("dark");
+  const router = useRouter();
+  const session = useSession();
 
   React.useEffect(() => {
     const t = getThemeFromLocal();
@@ -20,6 +25,10 @@ export const Header = () => {
     updateLocalTheme(newTheme);
   }
 
+  async function handleAuth() {
+    router.push("/api/auth/login");
+  }
+
   return (
     <>
       <div className="absolute top-5 left-5">
@@ -33,6 +42,18 @@ export const Header = () => {
           </a>
         </Button>
       </div>
+
+      {session.user ? (
+        <Button className="absolute top-5 right-20 h-10">
+          <Link href={`/user/${session.user.login}`}>
+            <a>Account</a>
+          </Link>
+        </Button>
+      ) : (
+        <Button onClick={handleAuth} className="absolute top-5 right-20 h-10">
+          Login
+        </Button>
+      )}
 
       <div className="absolute top-5 right-5">
         <Button

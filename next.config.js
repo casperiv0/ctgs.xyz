@@ -6,6 +6,9 @@
 module.exports = {
   experimental: { esmExternals: true },
   reactStrictMode: true,
+  images: {
+    domains: ["avatars.githubusercontent.com"],
+  },
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
       config.resolve.alias = {

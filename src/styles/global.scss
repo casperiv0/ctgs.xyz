@@ -34,3 +34,12 @@
     opacity: 0.2;
   }
 }
+
+@keyframes modalAnimation {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

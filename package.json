@@ -5,7 +5,7 @@
   "description": "Next.js with TypeScript template",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npx prisma generate && next build",
     "start": "next start",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,md,css,json}\" --ignore-path .gitignore",
     "lint": "eslint . --ext .ts,.js,.tsx,.jsx,"
@@ -13,23 +13,30 @@
   "dependencies": {
     "@casper124578/utils": "^1.3.0",
     "@prisma/client": "^3.1.1",
+    "@react-aria/virtualizer": "^3.3.4",
+    "cookie": "^0.4.1",
     "crypto-random-string": "^4.0.0",
     "formik": "^2.2.9",
+    "jsonwebtoken": "^8.5.1",
     "next": "^11.1.2",
     "prisma": "^3.1.1",
     "react": "^17.0.2",
     "react-bootstrap-icons": "^1.5.0",
     "react-dom": "^17.0.2",
+    "react-modal": "^3.14.3",
     "slugify": "^1.6.0",
     "yup": "^0.32.9",
-    "zod": "^3.9.3"
+    "zod": "^3.9.4"
   },
   "devDependencies": {
     "@casper124578/eslint-config": "^1.0.0",
     "@casper124578/eslint-config-next": "^0.1.1",
     "@casper124578/eslint-config-react": "^0.1.2",
+    "@types/cookie": "^0.4.1",
+    "@types/jsonwebtoken": "^8.5.5",
     "@types/react": "^17.0.24",
     "@types/react-dom": "^17.0.9",
+    "@types/react-modal": "^3.12.1",
     "autoprefixer": "^10.3.6",
     "eslint": "^7.32.0",
     "postcss": "^8.3.8",
