@@ -12,25 +12,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).send("Unauthorized");
   }
 
-  const user = await prisma.user.findUnique({
-    where: {
-      login: session.login,
-    },
-  });
-
-  if (!user) {
-    return res.status(401).send("Unauthorized");
-  }
-
   const handlers = {
     GET: async () => {
       const urls = await prisma.url.findMany({
         where: {
-          userId: user.id,
+          userId: session.id,
         },
       });
 
-      return res.json({ user, urls });
+      return res.json({ user: session, urls });
     },
     PUT: async () => {
       const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
@@ -39,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         isPublic: yup.boolean(),
       };
 
-      if (user.login !== session!.login) {
+      if (session.login !== session!.login) {
         return res.status(401).send("Unauthorized");
       }
 
@@ -51,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const updated = await prisma.user.update({
         where: {
-          id: user.id,
+          id: session.id,
         },
         data: {
           name: body.name,
@@ -59,7 +49,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       });
 
-      return res.json({ user: updated });
+      return res.json({ session: updated });
+    },
+    DELETE: async () => {
+      await prisma.user.delete({
+        where: {
+          id: session.id,
+        },
+      });
+
+      return res.status(200).send("OK");
     },
   };
 

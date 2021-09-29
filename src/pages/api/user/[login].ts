@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (!session && !user.isPublic) {
-    return res.status(401).send("Profile Not Public");
+    return res.status(403).send("Profile Not Public");
   }
 
   const urls = await prisma.url.findMany({

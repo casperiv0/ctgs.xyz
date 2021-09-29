@@ -16,7 +16,7 @@ model User {
     name      String? @db.VarChar(255)
     avatarUrl String? @db.Text
     isPublic  Boolean @default(false)
-    urls       Url[]
+    urls      Url[]
 }
 
 model Url {
@@ -24,6 +24,6 @@ model Url {
     slug   String  @unique @db.VarChar(255)
     url    String  @db.Text
     clicks Int     @default(0)
-    user   User?   @relation(fields: [userId], references: [id])
+    user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String?
 }

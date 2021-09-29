@@ -16,7 +16,7 @@ const modalStyles: ReactModal.Styles = {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    // animation: `${animation} 200ms`,
+    animation: "modalAnimation 200ms",
   },
   overlay: {
     background: "rgba(0,0,0,0.7)",

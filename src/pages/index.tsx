@@ -49,7 +49,7 @@ export default function Home() {
       const json: Record<string, string> | string = await (res.ok ? res.json() : res.text());
 
       if (typeof json === "string") {
-        console.log(json);
+        console.error(json);
         setError(json);
       } else if (typeof json === "object") {
         const url = `https://ctgs.xyz/${json.slug}`;
@@ -60,7 +60,7 @@ export default function Home() {
 
       setLoading(false);
     } catch (e: any) {
-      console.log(e);
+      console.error(e);
 
       setError(e.message);
       setLoading(false);

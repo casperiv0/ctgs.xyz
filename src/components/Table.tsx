@@ -7,6 +7,9 @@ interface Props {
 }
 
 export const Table = ({ showActions, urls }: Props) => {
+  // actions coming soon
+  showActions;
+
   return (
     <table className="border-collapse w-full mt-5">
       <thead>
@@ -17,11 +20,14 @@ export const Table = ({ showActions, urls }: Props) => {
           <th className="p-2 px-3 font-semibold bg-gray-200 dark:bg-black lg:table-cell text-left">
             URL
           </th>
-          {showActions ? (
+          <th className="p-2 px-3 font-semibold bg-gray-200 dark:bg-black lg:table-cell text-left">
+            Clicks
+          </th>
+          {/* {showActions ? (
             <th className="p-2 px-3 font-semibold bg-gray-200 dark:bg-black lg:table-cell text-left">
               Actions
             </th>
-          ) : null}
+          ) : null} */}
         </tr>
       </thead>
       <tbody>
@@ -40,13 +46,14 @@ export const Table = ({ showActions, urls }: Props) => {
                   {url.url}
                 </a>
               </td>
+              <td className={`p-2 px-3 ${isOdd && "bg-gray-100 dark:bg-black"}`}>{url.clicks}</td>
 
-              {showActions ? (
+              {/* {showActions ? (
                 <td className={`p-2 px-3 ${isOdd && "bg-gray-100 dark:bg-black"}`}>
                   <button className="underline">Edit</button>
                   <button className="underline text-red-600 ml-2">Delete</button>
                 </td>
-              ) : null}
+              ) : null} */}
             </tr>
           );
         })}

@@ -52,16 +52,27 @@ export default function UserPage({ user, urls, error }: Props) {
                   style={{ height: 45 }}
                   href={`https://github.com/${pageUser.login}`}
                 >
-                  <Image className="rounded-full" src={pageUser.avatarUrl} width={45} height={45} />
+                  <Image
+                    className="rounded-full mr-3"
+                    src={pageUser.avatarUrl}
+                    width={45}
+                    height={45}
+                  />
                 </a>
               ) : null}
-              <h1 className="ml-3 font-bold text-3xl">{pageUser.name || pageUser.login}</h1>
+              <h1 className="font-bold text-3xl">{pageUser.name || pageUser.login}</h1>
             </div>
 
             {showActions ? <Button onClick={() => setSettings(true)}>Settings</Button> : null}
           </div>
 
-          <Table showActions={showActions} urls={urls} />
+          {urls.length <= 0 ? (
+            <p className="mt-3">
+              {showActions ? "You don't have any urls." : "This user doesn't have any urls."}
+            </p>
+          ) : (
+            <Table showActions={showActions} urls={urls} />
+          )}
           <UserSettings isOpen={showSettings} onClose={() => setSettings(false)} />
         </>
       )}

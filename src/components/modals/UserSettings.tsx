@@ -1,18 +1,36 @@
 import { Formik } from "formik";
+import { useRouter } from "next/router";
 
 import { Modal, ModalProps } from "components/Modal";
 import { FormField } from "components/FormField";
 import { Input } from "components/Input";
-import { useSession } from "lib/auth/client";
+import { deleteAccount, logout, useSession } from "lib/auth/client";
 import { User } from ".prisma/client";
 import { Toggle } from "components/Toggle";
 import { Button } from "components/Button";
 
 export const UserSettings = ({ isOpen, onClose }: Pick<ModalProps, "isOpen" | "onClose">) => {
   const { user, setUser } = useSession();
+  const router = useRouter();
 
   if (!user) {
     return null;
+  }
+
+  async function handleLogout() {
+    const ok = await logout();
+    ok && setUser(null);
+  }
+
+  async function handleDelete() {
+    if (confirm("Are you sure? All data will be deleted")) {
+      const ok = await deleteAccount();
+
+      if (ok) {
+        setUser(null);
+        router.push("/");
+      }
+    }
   }
 
   async function onSubmit(data: Pick<User, "isPublic" | "name">) {
@@ -27,7 +45,7 @@ export const UserSettings = ({ isOpen, onClose }: Pick<ModalProps, "isOpen" | "o
 
       setUser({ ...user, ...json.user });
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
 
@@ -59,6 +77,19 @@ export const UserSettings = ({ isOpen, onClose }: Pick<ModalProps, "isOpen" | "o
             </form>
           )}
         </Formik>
+
+        <div className="mt-3">
+          <h3 className="font-semibold text-xl dark:text-white mb-2">Danger zone</h3>
+
+          <ul className="space-x-2">
+            <Button onClick={handleDelete} className="bg-red-500 dark:bg-red-500">
+              Delete Account
+            </Button>
+            <Button onClick={handleLogout} className="bg-red-500 dark:bg-red-500">
+              Logout
+            </Button>
+          </ul>
+        </div>
       </div>
     </Modal>
   );

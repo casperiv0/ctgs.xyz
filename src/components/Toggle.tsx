@@ -19,23 +19,27 @@ export const Toggle = ({ toggled, name, onClick }: Props) => {
   }, [toggled]);
 
   return (
-    <div className="bg-gray-300 dark:bg-dark-gray w-[100px] flex items-center justify-between rounded-lg relative overflow-hidden">
+    <div className="w-[100px] flex items-center justify-between rounded-lg relative overflow-hidden">
       <div
         style={{ transform: `translateX(${x}%)` }}
-        className="absolute bg-gray-500 dark:bg-black h-8 w-11 rounded-lg pointer-events-none transition-all duration-100"
+        className="absolute bg-dark-gray dark:bg-black h-8 w-11 rounded-lg pointer-events-none transition-all duration-100"
       />
 
       <button
         onClick={() => onClick({ target: { name, value: true } })}
         type="button"
-        className="w-full p-1 cursor-pointer pointer-events-auto z-10 text-white"
+        className={`w-full p-1 cursor-pointer pointer-events-auto z-10 dark:text-white ${
+          toggled && "text-white"
+        }`}
       >
         On
       </button>
       <button
         onClick={() => onClick({ target: { name, value: false } })}
         type="button"
-        className="w-full p-1 cursor-pointer pointer-events-auto z-10 text-white"
+        className={`w-full p-1 cursor-pointer pointer-events-auto z-10 dark:text-white ${
+          !toggled && "text-white"
+        }`}
       >
         Off
       </button>

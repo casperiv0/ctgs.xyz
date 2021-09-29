@@ -29,9 +29,42 @@ export async function getSession(): Promise<GetSessionData | null> {
 
     return data;
   } catch (e) {
-    console.log(e);
+    console.error(e);
 
     return null;
+  }
+}
+
+export async function logout() {
+  try {
+    const url = `${process.env.NEXT_PUBLIC_PROD_URL}/api/auth/logout`;
+
+    const res = await fetch(url, {
+      credentials: "same-origin",
+    });
+
+    return res.ok;
+  } catch (e) {
+    console.error(e);
+
+    return false;
+  }
+}
+
+export async function deleteAccount() {
+  try {
+    const url = `${process.env.NEXT_PUBLIC_PROD_URL}/api/auth`;
+
+    const res = await fetch(url, {
+      method: "DELETE",
+      credentials: "same-origin",
+    });
+
+    return res.ok;
+  } catch (e) {
+    console.error(e);
+
+    return false;
   }
 }
 
