@@ -10,6 +10,13 @@ datasource db {
     referentialIntegrity = "prisma"
 }
 
+model User {
+    id        String  @id @default(cuid())
+    login     String  @unique @db.VarChar(255)
+    name      String? @db.VarChar(255)
+    avatarUrl String? @db.Text
+}
+
 model Url {
     id     String @id @default(cuid())
     slug   String @unique @db.VarChar(255)
