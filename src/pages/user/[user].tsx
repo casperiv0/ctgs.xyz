@@ -3,6 +3,7 @@ import type { Url, User } from ".prisma/client";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import Head from "next/head";
 import { getSession } from "lib/auth/server";
 import { Table } from "components/Table";
 import { UserSettings } from "components/modals/UserSettings";
@@ -38,11 +39,20 @@ export default function UserPage({ user, urls, error }: Props) {
   return (
     <main className="bg-gray-50 dark:bg-dark-gray text-black dark:text-gray-300 h-screen pt-24 px-5">
       {!pageUser ? (
-        <div className="flex font-bold items-center justify-center">
-          <p className="text-center max-w-lg">{error}</p>
-        </div>
+        <>
+          <Head>
+            <title>ctgs.xyz</title>
+          </Head>
+          <div className="flex font-bold items-center justify-center">
+            <p className="text-center max-w-lg">{error}</p>
+          </div>
+        </>
       ) : (
         <>
+          <Head>
+            <title>{pageUser.name || pageUser.login} Profile - ctgs.xyz</title>
+          </Head>
+
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               {pageUser.avatarUrl ? (
