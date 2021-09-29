@@ -1,15 +1,15 @@
 import * as React from "react";
 import Link from "next/link";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "lib/auth/client";
 import { Moon, Sun } from "react-bootstrap-icons";
 import { getThemeFromLocal, Theme, updateBodyClass, updateLocalTheme } from "lib/theme";
 import { Button } from "./Button";
+import { useRouter } from "next/dist/client/router";
 
 export const Header = () => {
   const [theme, setTheme] = React.useState<Theme>("dark");
+  const router = useRouter();
   const session = useSession();
-
-  console.log(session);
 
   React.useEffect(() => {
     const t = getThemeFromLocal();
@@ -26,10 +26,7 @@ export const Header = () => {
   }
 
   async function handleAuth() {
-    await signIn("github", {
-      redirect: false,
-      callbackUrl: "/",
-    });
+    router.push("/api/auth/login");
   }
 
   return (
@@ -46,7 +43,7 @@ export const Header = () => {
         </Button>
       </div>
 
-      {session.status === "authenticated" ? (
+      {session.user ? (
         <Button className="absolute top-5 right-20 h-10">
           <Link href="/account">
             <a>Account</a>
