@@ -1,17 +1,12 @@
 import * as React from "react";
 import type { Url } from ".prisma/client";
-import { useSession } from "lib/auth/client";
 
 interface Props {
-  userId: string;
+  showActions: boolean;
   urls: Url[];
 }
 
-export const Table = ({ userId, urls }: Props) => {
-  const session = useSession();
-
-  const showActions = userId === session.user?.id;
-
+export const Table = ({ showActions, urls }: Props) => {
   return (
     <table className="border-collapse w-full mt-5">
       <thead>

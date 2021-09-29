@@ -3,6 +3,7 @@ import { Url, User } from ".prisma/client";
 
 interface SessionContext {
   user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 interface GetSessionData {
@@ -48,7 +49,7 @@ export const SessionProvider = ({ initialValue, children }: ProviderProps) => {
     fetchUser();
   }, [fetchUser]);
 
-  const value = { user };
+  const value = { user, setUser };
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 };
