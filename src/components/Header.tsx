@@ -45,7 +45,7 @@ export const Header = () => {
 
       {session.user ? (
         <Button className="absolute top-5 right-20 h-10">
-          <Link href="/account">
+          <Link href={`/user/${session.user.login}`}>
             <a>Account</a>
           </Link>
         </Button>
