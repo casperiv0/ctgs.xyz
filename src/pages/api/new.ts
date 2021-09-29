@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { validateSchema } from "@casper124578/utils";
 import slugify from "slugify";
 import { prisma } from "lib/prisma";
+import { getSession } from "lib/auth/server";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const schema = {
@@ -15,6 +16,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+
+  const session = await getSession(req);
 
   const [error] = await validateSchema(schema, body);
 
@@ -46,6 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     data: {
       slug: slugified,
       url: body.url,
+      userId: session?.id,
     },
   });
 
