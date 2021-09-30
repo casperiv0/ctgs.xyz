@@ -44,7 +44,10 @@ export const Header = () => {
       </div>
 
       {session.user ? (
-        <Button className="absolute top-5 right-20 h-10">
+        <Button
+          onClick={() => router.push(`/user/${session.user!.login}`)}
+          className="absolute top-5 right-20 h-10"
+        >
           <Link href={`/user/${session.user.login}`}>
             <a>Account</a>
           </Link>

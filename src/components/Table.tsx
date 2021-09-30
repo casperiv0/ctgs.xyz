@@ -19,6 +19,8 @@ export const Table = ({ showActions, ...rest }: Props) => {
   const [showModal, setModal] = React.useState<Modals | null>(null);
   const [tempUrl, setTempUrl] = React.useState<Url | null>(null);
 
+  const [isDeleting, setDeleting] = React.useState(false);
+
   function handleUpdate(prevUrl: Url, newUrl: Url) {
     setUrls((prev) => {
       const indexOf = prev.indexOf(prevUrl);
@@ -32,6 +34,7 @@ export const Table = ({ showActions, ...rest }: Props) => {
     if (!tempUrl || showModal !== Modals.DELETE) return;
 
     try {
+      setDeleting(true);
       const url = `${process.env.NEXT_PUBLIC_PROD_URL}/api/${tempUrl.id}`;
       const res = await fetch(url, {
         method: "DELETE",
@@ -47,6 +50,8 @@ export const Table = ({ showActions, ...rest }: Props) => {
       }
     } catch (e) {
       console.log(e);
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -133,7 +138,11 @@ export const Table = ({ showActions, ...rest }: Props) => {
 
         <div className="mt-5 flex items-center justify-between">
           <Button onClick={() => setModal(null)}>No, do not delete.</Button>
-          <Button onClick={handleDelete} className="bg-red-500 dark:bg-red-500">
+          <Button
+            disabled={isDeleting}
+            onClick={handleDelete}
+            className="bg-red-500 dark:bg-red-500"
+          >
             Yes, delete shortened url.
           </Button>
         </div>
