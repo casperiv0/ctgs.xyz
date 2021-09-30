@@ -63,5 +63,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   };
 
   const handler = handlers[method];
-  await handler();
+  if (handler) {
+    return handler();
+  }
+
+  return res.status(405).send("Method not allowed");
 }
