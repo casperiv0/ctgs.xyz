@@ -4,15 +4,13 @@ import Head from "next/head";
 import { Formik, FormikHelpers } from "formik";
 import { useRouter } from "next/router";
 
-import { FormField } from "components/FormField";
-import { Error } from "components/Error";
-import { Input } from "components/Input";
 import { Loader } from "components/Loader";
 import { Button } from "components/Button";
 
-import { handleCopy, handleGenerate } from "lib/utils";
+import { handleCopy } from "lib/utils";
 import { validate } from "lib/validate";
 import { getSession } from "lib/auth/server";
+import { UrlFields } from "components/UrlForm";
 
 const INITIAL_VALUES = {
   url: "",
@@ -24,13 +22,6 @@ export default function Home() {
   const [result, setResult] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<null | string>(null);
-
-  const urlRef = React.useRef<HTMLInputElement>(null);
-  const slugRef = React.useRef<HTMLInputElement>(null);
-
-  React.useEffect(() => {
-    urlRef.current?.focus();
-  }, []);
 
   async function onSubmit(
     data: typeof INITIAL_VALUES,
@@ -103,49 +94,13 @@ export default function Home() {
                 </div>
               ) : null}
 
-              <FormField label="Enter URL">
-                <Input
-                  hasError={!!errors.url}
-                  ref={urlRef}
-                  type="url"
-                  id="url"
-                  placeholder="URL"
-                  name="url"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={values.url}
-                />
-                <Error touched={touched.url}>{errors.url}</Error>
-              </FormField>
-
-              <FormField label="Enter slug">
-                <div className="relative w-full">
-                  <Input
-                    ref={slugRef}
-                    hasError={!!errors.slug}
-                    type="text"
-                    id="slug"
-                    placeholder="Slug"
-                    name="slug"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.slug}
-                  />
-
-                  <Button
-                    type="button"
-                    small
-                    onClick={() => slugRef.current && handleGenerate(slugRef.current, handleChange)}
-                    className={`
-                     absolute top-1/2 right-2 -translate-y-1/2
-                  `}
-                  >
-                    generate
-                  </Button>
-                </div>
-
-                <Error touched={touched.slug}>{errors.slug}</Error>
-              </FormField>
+              <UrlFields
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                values={values}
+                errors={errors}
+                touched={touched}
+              />
 
               <div className="flex items-center justify-between">
                 <div>

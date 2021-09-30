@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Formik } from "formik";
 import { useRouter } from "next/router";
 
@@ -8,8 +9,11 @@ import { deleteAccount, logout, useSession } from "lib/auth/client";
 import { User } from ".prisma/client";
 import { Toggle } from "components/Toggle";
 import { Button } from "components/Button";
+import { AlertModal } from "./Alert";
 
 export const UserSettings = ({ isOpen, onClose }: Pick<ModalProps, "isOpen" | "onClose">) => {
+  const [showDeleteAlert, setDeleteAlert] = React.useState(false);
+
   const { user, setUser } = useSession();
   const router = useRouter();
 
@@ -23,13 +27,11 @@ export const UserSettings = ({ isOpen, onClose }: Pick<ModalProps, "isOpen" | "o
   }
 
   async function handleDelete() {
-    if (confirm("Are you sure? All data will be deleted")) {
-      const ok = await deleteAccount();
+    const ok = await deleteAccount();
 
-      if (ok) {
-        setUser(null);
-        router.push("/");
-      }
+    if (ok) {
+      setUser(null);
+      router.push("/");
     }
   }
 
@@ -82,7 +84,7 @@ export const UserSettings = ({ isOpen, onClose }: Pick<ModalProps, "isOpen" | "o
           <h3 className="font-semibold text-xl dark:text-white mb-2">Danger zone</h3>
 
           <ul className="space-x-2">
-            <Button onClick={handleDelete} className="bg-red-500 dark:bg-red-500">
+            <Button onClick={() => setDeleteAlert(true)} className="bg-red-500 dark:bg-red-500">
               Delete Account
             </Button>
             <Button onClick={handleLogout} className="bg-red-500 dark:bg-red-500">
@@ -91,6 +93,24 @@ export const UserSettings = ({ isOpen, onClose }: Pick<ModalProps, "isOpen" | "o
           </ul>
         </div>
       </div>
+
+      <AlertModal
+        onClose={() => setDeleteAlert(false)}
+        isOpen={showDeleteAlert}
+        title="Delete Account"
+      >
+        <p className="py-3 dark:text-white">
+          Are you sure you want to delete your account? This will delete all your data.{" "}
+          <strong>This action cannot be undone.</strong>
+        </p>
+
+        <div className="mt-5 flex items-center justify-between">
+          <Button onClick={() => setDeleteAlert(false)}>No, do not delete.</Button>
+          <Button onClick={handleDelete} className="bg-red-500 dark:bg-red-500">
+            Yes, delete my account.
+          </Button>
+        </div>
+      </AlertModal>
     </Modal>
   );
 };
