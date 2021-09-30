@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "lib/prisma";
 import { getSession } from "lib/auth/server";
+import { validateUrlBody } from "lib/validateUrlBody";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const method = req.method as keyof typeof handlers;
@@ -58,6 +59,45 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
       return res.send("OK");
+    },
+    PUT: async () => {
+      const session = await getSession(req);
+      if (!session) {
+        return res.status(401).send("Unauthorized");
+      }
+
+      const url = await prisma.url.findUnique({
+        where: {
+          id: req.query.slug as string,
+        },
+      });
+
+      if (!url) {
+        return res.status(404).send("Not Found");
+      }
+
+      if (url.userId !== session.id) {
+        return res.status(403).send("Forbidden");
+      }
+
+      const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+      const { status, error, slugified } = await validateUrlBody(body, url);
+
+      if (error) {
+        return res.status(status).send(error);
+      }
+
+      const updated = await prisma.url.update({
+        where: {
+          id: url.id,
+        },
+        data: {
+          slug: slugified,
+          url: body.url,
+        },
+      });
+
+      return res.json({ updated });
     },
   };
 

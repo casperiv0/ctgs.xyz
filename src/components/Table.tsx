@@ -2,19 +2,34 @@ import * as React from "react";
 import type { Url } from ".prisma/client";
 import { AlertModal } from "./modals/Alert";
 import { Button } from "./Button";
+import { EditUrlModal } from "./modals/EditUrl";
 
 interface Props {
   showActions: boolean;
   urls: Url[];
 }
 
+enum Modals {
+  DELETE,
+  EDIT,
+}
+
 export const Table = ({ showActions, ...rest }: Props) => {
   const [urls, setUrls] = React.useState(rest.urls);
-  const [showDeleteAlert, setDeleteAlert] = React.useState(false);
+  const [showModal, setModal] = React.useState<Modals | null>(null);
   const [tempUrl, setTempUrl] = React.useState<Url | null>(null);
 
+  function handleUpdate(prevUrl: Url, newUrl: Url) {
+    setUrls((prev) => {
+      const indexOf = prev.indexOf(prevUrl);
+      prev[indexOf] = newUrl;
+
+      return prev;
+    });
+  }
+
   async function handleDelete() {
-    if (!tempUrl) return;
+    if (!tempUrl || showModal !== Modals.DELETE) return;
 
     try {
       const url = `${process.env.NEXT_PUBLIC_PROD_URL}/api/${tempUrl.id}`;
@@ -28,7 +43,7 @@ export const Table = ({ showActions, ...rest }: Props) => {
       if (data === "OK") {
         setUrls((prev) => prev.filter((v) => v.id !== tempUrl.id));
         setTempUrl(null);
-        setDeleteAlert(false);
+        setModal(null);
       }
     } catch (e) {
       console.log(e);
@@ -75,11 +90,19 @@ export const Table = ({ showActions, ...rest }: Props) => {
 
               {showActions ? (
                 <td className={`p-2 px-3 ${isOdd && "bg-gray-100 dark:bg-black"}`}>
-                  <button className="underline">Edit</button>
                   <button
                     onClick={() => {
                       setTempUrl(url);
-                      setDeleteAlert(true);
+                      setModal(Modals.EDIT);
+                    }}
+                    className="underline"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => {
+                      setTempUrl(url);
+                      setModal(Modals.DELETE);
                     }}
                     className="underline text-red-600 ml-2"
                   >
@@ -92,9 +115,16 @@ export const Table = ({ showActions, ...rest }: Props) => {
         })}
       </tbody>
 
+      <EditUrlModal
+        isOpen={showModal === Modals.EDIT}
+        onClose={() => setModal(null)}
+        onSuccess={handleUpdate}
+        url={tempUrl}
+      />
+
       <AlertModal
-        onClose={() => setDeleteAlert(false)}
-        isOpen={showDeleteAlert}
+        onClose={() => setModal(null)}
+        isOpen={showModal === Modals.DELETE}
         title="Delete shortened url"
       >
         <p className="py-3 dark:text-white">
@@ -102,7 +132,7 @@ export const Table = ({ showActions, ...rest }: Props) => {
         </p>
 
         <div className="mt-5 flex items-center justify-between">
-          <Button onClick={() => setDeleteAlert(false)}>No, do not delete.</Button>
+          <Button onClick={() => setModal(null)}>No, do not delete.</Button>
           <Button onClick={handleDelete} className="bg-red-500 dark:bg-red-500">
             Yes, delete shortened url.
           </Button>

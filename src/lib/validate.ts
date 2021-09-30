@@ -2,7 +2,7 @@ import { z, ZodError } from "zod";
 
 export async function validate(values: any) {
   const schema = z.object({
-    url: z.string().url().min(1),
+    url: z.string().url().min(4),
     slug: z.string().min(3),
   });
 
