@@ -3,6 +3,7 @@ import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import { Formik, FormikHelpers } from "formik";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 import { Loader } from "components/Loader";
 import { Button } from "components/Button";
@@ -11,6 +12,7 @@ import { handleCopy } from "lib/utils";
 import { validate } from "lib/validate";
 import { getSession } from "lib/auth/server";
 import { UrlFields } from "components/UrlForm";
+import { useSession } from "lib/auth/client";
 
 const INITIAL_VALUES = {
   url: "",
@@ -18,6 +20,7 @@ const INITIAL_VALUES = {
 };
 
 export default function Home() {
+  const session = useSession();
   const router = useRouter();
   const [result, setResult] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -77,10 +80,21 @@ export default function Home() {
 
       <main className="w-screen px-5 max-w-3xl xl:w-3/6 xl:px-0">
         {router.query.fromGa ? (
-          <div className="text-lg bg-gray-300 dark:bg-gray-700 my-5 rounded-md p-2 px-3">
+          <Info>
             <span className="font-semibold">ctgs.ga</span> has moved to{" "}
             <span className="font-semibold">ctgs.xyz</span>!
-          </div>
+          </Info>
+        ) : null}
+
+        {router.query.login && session.user ? (
+          <Info>
+            Successfully logged in as{" "}
+            <Link href={`/user/${session.user.login}`}>
+              <a className="underline">
+                <span className="font-semibold">{session.user.login}</span>
+              </a>
+            </Link>
+          </Info>
         ) : null}
 
         <h1 className="text-xl sm:text-2xl md:text-3xl mb-3 font-semibold">Shorten your URL!</h1>
@@ -145,4 +159,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
       session: await getSession(req),
     },
   };
+};
+
+const Info = ({ children }: { children: React.ReactFragment }) => {
+  return (
+    <div className="text-lg bg-gray-300 dark:bg-gray-700 my-5 rounded-md p-2 px-3">{children}</div>
+  );
 };

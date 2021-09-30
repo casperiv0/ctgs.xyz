@@ -57,17 +57,13 @@ export default function UserPage({ user, urls, error }: Props) {
             <div className="flex items-center">
               {pageUser.avatarUrl ? (
                 <a
+                  className="mr-3"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ height: 45 }}
                   href={`https://github.com/${pageUser.login}`}
                 >
-                  <Image
-                    className="rounded-full mr-3"
-                    src={pageUser.avatarUrl}
-                    width={45}
-                    height={45}
-                  />
+                  <Image className="rounded-full" src={pageUser.avatarUrl} width={45} height={45} />
                 </a>
               ) : null}
               <h1 className="font-bold text-3xl">{pageUser.name || pageUser.login}</h1>

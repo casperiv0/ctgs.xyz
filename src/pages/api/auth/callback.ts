@@ -49,8 +49,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     dbUser = await prisma.user.create({
       data: {
         login: userData.login,
-        avatarUrl: userData.image ?? null,
+        avatarUrl: userData.avatar_url ?? null,
         name: userData.name ?? null,
+      },
+    });
+  } else {
+    dbUser = await prisma.user.update({
+      where: {
+        id: dbUser.id,
+      },
+      data: {
+        avatarUrl: userData.avatar_url ?? dbUser.avatarUrl ?? null,
+        name: userData.name ?? dbUser.avatarUrl ?? null,
       },
     });
   }
@@ -60,5 +70,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const token = signJWT(dbUser.id, expires);
   await setCookie({ res, expires, value: token, name: "ctgs.xyz-session" });
 
-  return res.redirect(process.env.NEXT_PUBLIC_PROD_URL!);
+  return res.redirect(`${process.env.NEXT_PUBLIC_PROD_URL}?login=true`);
 }
