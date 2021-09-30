@@ -71,7 +71,7 @@ export const EditUrlModal = ({ url, isOpen, onSuccess, onClose }: Props) => {
             touched,
             isValid,
           }) => (
-            <form onSubmit={handleSubmit}>
+            <form className="mt-3" onSubmit={handleSubmit}>
               {error ? (
                 <div className="bg-red-500 text-white p-2 px-3 font-semibold rounded-md my-3">
                   {error}
