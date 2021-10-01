@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Formik } from "formik";
+import { InfoCircle } from "react-bootstrap-icons";
 import type { Url, User } from ".prisma/client";
+import type { UrlWithUser } from "./Table";
 
 import { Modal, ModalProps } from "components/Modal";
 import { useSession } from "lib/auth/client";
@@ -9,7 +11,6 @@ import { validate } from "lib/validate";
 import { UrlFields } from "components/UrlForm";
 import { FormField } from "components/FormField";
 import { Select } from "components/Select";
-import { UrlWithUser } from "./Table";
 
 interface Props extends Pick<ModalProps, "isOpen" | "onClose"> {
   url: UrlWithUser | null;
@@ -56,6 +57,11 @@ export const EditUrlModal = ({ url, isOpen, users, onSuccess, onClose }: Props) 
     <Modal onClose={onClose} isOpen={isOpen}>
       <div className="p-4">
         <h1 className="text-3xl dark:text-white font-bold">Edit URL</h1>
+
+        <p className="mt-3 dark:bg-[#111111] bg-gray-300 dark:text-white flex items-center p-2 px-3 rounded-md">
+          <InfoCircle className="mr-2" width={20} height={20} />
+          Users will be notified when changes are made to their connected urls.
+        </p>
 
         <Formik
           validate={validate}

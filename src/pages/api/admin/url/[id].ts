@@ -39,6 +39,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).send(error.message);
       }
 
+      // todo:
+      // await prisma.notification.create({
+      //   data: {},
+      // });
+
       const updated = await prisma.url.update({
         where: {
           id: url.id,

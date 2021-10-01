@@ -6,8 +6,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const session = await getSession(req);
   const method = req.method as keyof typeof handlers;
 
-  console.log({ session });
-
   if (!isAdmin(session)) {
     return res.status(403).send("Forbidden");
   }

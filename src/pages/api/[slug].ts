@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "lib/prisma";
 import { getSession } from "lib/auth/server";
 import { validateUrlBody } from "lib/validateUrlBody";
+import { parseBody } from "lib/utils";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const method = req.method as keyof typeof handlers;
@@ -80,7 +81,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(403).send("Forbidden");
       }
 
-      const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+      const body = parseBody(req);
       const { status, error, slugified } = await validateUrlBody(body, url);
 
       if (error) {
