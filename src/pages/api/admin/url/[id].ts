@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const method = req.method as keyof typeof handlers;
   const id = req.query.id as string;
 
-  if (!isAdmin(session)) {
+  if (!session || !isAdmin(session)) {
     return res.status(403).send("Forbidden");
   }
 
@@ -39,10 +39,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).send(error.message);
       }
 
-      // todo:
-      // await prisma.notification.create({
-      //   data: {},
-      // });
+      if (url.userId) {
+        // todo: finalize this
+        await prisma.notification.create({
+          data: {
+            title: "URL Updated.",
+            description: `${url.slug} (${url.url}) was updated. TODO`,
+            executorId: session.id,
+            userId: url.userId,
+          },
+        });
+      }
 
       const updated = await prisma.url.update({
         where: {
@@ -68,6 +75,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           id,
         },
       });
+
+      if (url.userId) {
+        // todo: finalize this
+        await prisma.notification.create({
+          data: {
+            title: "URL Deleted.",
+            description: `${url.slug} (${url.url}) was deleted. TODO`,
+            executorId: session.id,
+            userId: url.userId,
+          },
+        });
+      }
 
       return res.status(200).send("OK");
     },
