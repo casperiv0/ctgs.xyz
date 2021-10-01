@@ -1,4 +1,5 @@
 import randomString from "crypto-random-string";
+import { NextApiRequest } from "next";
 
 export function handleCopy(
   result: string | null,
@@ -20,4 +21,8 @@ export function handleGenerate(inputElement: HTMLInputElement, handleChange: any
 
   handleChange({ target: { name: "slug", value: randomSlug } });
   inputElement.value = randomSlug;
+}
+
+export function parseBody<T = any>(req: Pick<NextApiRequest, "body">): T {
+  return typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 }
