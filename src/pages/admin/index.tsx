@@ -48,9 +48,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
   return {
     props: {
+      error: typeof data === "string" ? data : null,
       session: await getSession(req),
-      urls: data.urls,
-      users: data.users,
+      urls: data.urls ?? [],
+      users: data.users ?? [],
     },
   };
 };

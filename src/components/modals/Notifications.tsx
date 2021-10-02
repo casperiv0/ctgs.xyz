@@ -30,8 +30,6 @@ export const NotificationsModal = ({ notifications, isOpen, onClose }: Props) =>
           <p className="dark:text-white py-2">You are up to date.</p>
         ) : (
           notifications.map((notification) => {
-            console.log(notification);
-
             const dateFormat = Intl.DateTimeFormat([], {
               hour: "2-digit",
               minute: "2-digit",
