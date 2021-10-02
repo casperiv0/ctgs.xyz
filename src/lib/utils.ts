@@ -1,5 +1,5 @@
 import randomString from "crypto-random-string";
-import { NextApiRequest } from "next";
+import type { NextApiRequest } from "next";
 
 export function handleCopy(
   result: string | null,
