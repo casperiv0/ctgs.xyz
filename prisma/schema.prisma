@@ -31,12 +31,13 @@ model Url {
 }
 
 model Notification {
-    id          String  @id @default(cuid())
+    id          String   @id @default(cuid())
     userId      String
-    user        User    @relation(fields: [userId], references: [id])
-    title       String  @db.VarChar(255)
-    description String  @db.Text
-    isDeleted   Boolean @default(false)
-    executor    User    @relation("executor", fields: [executorId], references: [id])
+    user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    title       String   @db.VarChar(255)
+    description String   @db.Text
+    isDeleted   Boolean  @default(false)
+    executor    User     @relation("executor", fields: [executorId], references: [id], onDelete: Cascade)
     executorId  String
+    createdAt   DateTime @default(now())
 }

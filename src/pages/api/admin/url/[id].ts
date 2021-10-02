@@ -4,6 +4,7 @@ import { getSession, isAdmin } from "lib/auth/server";
 import { prisma } from "lib/prisma";
 import { parseBody } from "lib/utils";
 import { validateSchema } from "@casper124578/utils";
+import { Url } from ".prisma/client";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getSession(req);
@@ -28,6 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     PUT: async () => {
       const schema = {
         userId: yup.string().nullable(),
+        reason: yup.string().required(),
         slug: yup.string().required().max(255),
         url: yup.string().required().url(),
       };
@@ -40,13 +42,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       if (url.userId) {
-        // todo: finalize this
+        const reason = getUpdateMessage(body, url);
+
         await prisma.notification.create({
           data: {
             title: "URL Updated.",
-            description: `${url.slug} (${url.url}) was updated. TODO`,
+            description: reason,
             executorId: session.id,
             userId: url.userId,
+          },
+        });
+      }
+
+      if (url.userId !== body.userId && body.userId) {
+        const error =
+          body.userId === session.id
+            ? `URL (${url.slug}) was moved to this account.`
+            : `URL (${url.slug}) was moved to a different account.`;
+
+        await prisma.notification.create({
+          data: {
+            title: "URL Moved.",
+            description: error,
+            executorId: session.id,
+            userId: body.userId,
           },
         });
       }
@@ -81,7 +100,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await prisma.notification.create({
           data: {
             title: "URL Deleted.",
-            description: `${url.slug} (${url.url}) was deleted. TODO`,
+            description: `${url.slug} was deleted for breaking the Terms of Service.`,
             executorId: session.id,
             userId: url.userId,
           },
@@ -98,4 +117,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   return res.status(405).send("Method not allowed");
+}
+
+function getUpdateMessage(body: Url, url: Url) {
+  if (body.url !== url.url) {
+    return `URL was updated from "${url.url}" to "${body.url}".`;
+  }
+
+  if (body.slug !== url.slug) {
+    return `Slug was updated from "${url.slug}" to "${body.slug}".`;
+  }
+
+  if (body.userId !== url.userId) {
+    if (body.userId === null) {
+      return `URL (${url.slug}) was removed from your account. It still can be used.`;
+    }
+
+    return `URL (${url.slug}) was moved to a different account.`;
+  }
+
+  return `An unknown change was made to ${url.slug} (${url.url}).`;
 }

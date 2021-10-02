@@ -36,7 +36,7 @@ export const EditUrlModal = ({ url, isOpen, users, onSuccess, onClose }: Props) 
       const fetchUrl = `${process.env.NEXT_PUBLIC_PROD_URL}/api/admin/url/${url.id}`;
       const res = await fetch(fetchUrl, {
         method: "PUT",
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, reason: "test" }),
       });
 
       const json = (await (res.ok ? res.json() : res.text())) as string | Record<string, any>;

@@ -9,6 +9,8 @@ import { Table } from "components/Table";
 import { UserSettings } from "components/modals/UserSettings";
 import { useSession } from "lib/auth/client";
 import { Button } from "components/Button";
+import { NotificationsModal } from "components/modals/Notifications";
+import { useNotifications } from "lib/notifications";
 
 interface Props {
   user: User | null;
@@ -22,8 +24,15 @@ const errors = {
     "This profile is set to private. You cannot view this user's urls. You are able to use them.",
 };
 
+enum Modals {
+  SETTINGS,
+  NOTIFICATIONS,
+}
+
 export default function UserPage({ user, urls, error }: Props) {
-  const [showSettings, setSettings] = React.useState(false);
+  const { notifications } = useNotifications();
+  const [modal, setModal] = React.useState<Modals | null>(null);
+
   const router = useRouter();
   const session = useSession();
 
@@ -69,7 +78,12 @@ export default function UserPage({ user, urls, error }: Props) {
               <h1 className="font-bold text-3xl">{pageUser.name || pageUser.login}</h1>
             </div>
 
-            {showActions ? <Button onClick={() => setSettings(true)}>Settings</Button> : null}
+            {showActions ? (
+              <div className="space-x-2">
+                <Button onClick={() => setModal(Modals.SETTINGS)}>Settings</Button>
+                <Button onClick={() => setModal(Modals.NOTIFICATIONS)}>Notifications</Button>
+              </div>
+            ) : null}
           </div>
 
           {urls.length <= 0 ? (
@@ -79,7 +93,13 @@ export default function UserPage({ user, urls, error }: Props) {
           ) : (
             <Table showActions={showActions} urls={urls} />
           )}
-          <UserSettings isOpen={showSettings} onClose={() => setSettings(false)} />
+
+          <UserSettings isOpen={Modals.SETTINGS === modal} onClose={() => setModal(null)} />
+          <NotificationsModal
+            notifications={notifications}
+            isOpen={Modals.NOTIFICATIONS === modal}
+            onClose={() => setModal(null)}
+          />
         </>
       )}
     </main>
