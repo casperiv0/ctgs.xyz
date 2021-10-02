@@ -14,10 +14,17 @@ enum Modals {
   EDIT,
 }
 
+enum Filter {
+  SLUG = "slug",
+  CLICKS_ASC = "clicks_asc",
+  CLICKS_DESC = "clicks_desc",
+}
+
 export const Table = ({ showActions, ...rest }: Props) => {
   const [urls, setUrls] = React.useState(rest.urls);
   const [showModal, setModal] = React.useState<Modals | null>(null);
   const [tempUrl, setTempUrl] = React.useState<Url | null>(null);
+  const [filter, setFilter] = React.useState<Filter | null>(null);
 
   const [isDeleting, setDeleting] = React.useState(false);
 
@@ -55,17 +62,43 @@ export const Table = ({ showActions, ...rest }: Props) => {
     }
   }
 
+  const filteredUrls = React.useMemo(() => {
+    switch (filter) {
+      case Filter.SLUG: {
+        return urls.sort((a, b) => a.slug.length - b.slug.length);
+      }
+      case Filter.CLICKS_ASC: {
+        return urls.sort((a, b) => a.clicks - b.clicks);
+      }
+      case Filter.CLICKS_DESC: {
+        return urls.sort((a, b) => b.clicks - a.clicks);
+      }
+      default:
+        return urls;
+    }
+  }, [urls, filter]);
+
   return (
     <table className="border-collapse w-full mt-5">
       <thead>
         <tr>
-          <th className="p-2 px-3 font-semibold bg-gray-200 dark:bg-black lg:table-cell text-left">
+          <th
+            onClick={() => setFilter(Filter.SLUG)}
+            className="p-2 px-3 font-semibold bg-gray-200 dark:bg-black lg:table-cell text-left cursor-pointer select-none"
+          >
             Slug
           </th>
-          <th className="p-2 px-3 font-semibold bg-gray-200 dark:bg-black lg:table-cell text-left">
+          <th className="p-2 px-3 font-semibold bg-gray-200 dark:bg-black lg:table-cell text-left cursor-pointer select-none">
             URL
           </th>
-          <th className="p-2 px-3 font-semibold bg-gray-200 dark:bg-black lg:table-cell text-left">
+          <th
+            onClick={() =>
+              setFilter((p) => {
+                return p === Filter.CLICKS_ASC ? Filter.CLICKS_DESC : Filter.CLICKS_ASC;
+              })
+            }
+            className="p-2 px-3 font-semibold bg-gray-200 dark:bg-black lg:table-cell text-left cursor-pointer select-none"
+          >
             Clicks
           </th>
           {showActions ? (
@@ -76,7 +109,7 @@ export const Table = ({ showActions, ...rest }: Props) => {
         </tr>
       </thead>
       <tbody>
-        {urls.map((url, idx) => {
+        {filteredUrls.map((url, idx) => {
           const isOdd = idx % 2 !== 0;
 
           return (
