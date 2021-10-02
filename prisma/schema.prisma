@@ -11,12 +11,14 @@ datasource db {
 }
 
 model User {
-    id        String  @id @default(cuid())
-    login     String  @unique @db.VarChar(255)
-    name      String? @db.VarChar(255)
-    avatarUrl String? @db.Text
-    isPublic  Boolean @default(false)
-    urls      Url[]
+    id            String         @id @default(cuid())
+    login         String         @unique @db.VarChar(255)
+    name          String?        @db.VarChar(255)
+    avatarUrl     String?        @db.Text
+    isPublic      Boolean        @default(false)
+    urls          Url[]
+    notifications Notification[]
+    executions    Notification[] @relation("executor")
 }
 
 model Url {
@@ -26,4 +28,16 @@ model Url {
     clicks Int     @default(0)
     user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String?
+}
+
+model Notification {
+    id          String   @id @default(cuid())
+    userId      String
+    user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    title       String   @db.VarChar(255)
+    description String   @db.Text
+    isDeleted   Boolean  @default(false)
+    executor    User     @relation("executor", fields: [executorId], references: [id], onDelete: Cascade)
+    executorId  String
+    createdAt   DateTime @default(now())
 }

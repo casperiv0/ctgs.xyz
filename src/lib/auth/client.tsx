@@ -79,6 +79,12 @@ export const SessionProvider = ({ initialValue, children }: ProviderProps) => {
   }, []);
 
   React.useEffect(() => {
+    if (initialValue?.session) {
+      setUser(initialValue.session);
+    }
+  }, [initialValue?.session]);
+
+  React.useEffect(() => {
     fetchUser();
   }, [fetchUser]);
 

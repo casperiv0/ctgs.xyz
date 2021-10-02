@@ -1,12 +1,14 @@
 import * as React from "react";
-import type { Url } from ".prisma/client";
-import { AlertModal } from "./modals/Alert";
-import { Button } from "./Button";
-import { EditUrlModal } from "./modals/EditUrl";
+import Image from "next/image";
+import type { Url, User } from ".prisma/client";
+import { AlertModal } from "components/modals/Alert";
+import { Button } from "components/Button";
+import { EditUrlModal } from "components/admin/EditUrlModal";
 
+export type UrlWithUser = Url & { user: User | null };
 interface Props {
-  showActions: boolean;
-  urls: Url[];
+  urls: UrlWithUser[];
+  users: User[];
 }
 
 enum Modals {
@@ -14,14 +16,14 @@ enum Modals {
   EDIT,
 }
 
-export const Table = ({ showActions, ...rest }: Props) => {
+export const Table = ({ users, ...rest }: Props) => {
   const [urls, setUrls] = React.useState(rest.urls);
   const [showModal, setModal] = React.useState<Modals | null>(null);
-  const [tempUrl, setTempUrl] = React.useState<Url | null>(null);
+  const [tempUrl, setTempUrl] = React.useState<UrlWithUser | null>(null);
 
   const [isDeleting, setDeleting] = React.useState(false);
 
-  function handleUpdate(prevUrl: Url, newUrl: Url) {
+  function handleUpdate(prevUrl: UrlWithUser, newUrl: UrlWithUser) {
     setUrls((prev) => {
       const indexOf = prev.indexOf(prevUrl);
       prev[indexOf] = newUrl;
@@ -35,7 +37,7 @@ export const Table = ({ showActions, ...rest }: Props) => {
 
     try {
       setDeleting(true);
-      const url = `${process.env.NEXT_PUBLIC_PROD_URL}/api/${tempUrl.id}`;
+      const url = `${process.env.NEXT_PUBLIC_PROD_URL}/api/admin/url/${tempUrl.id}`;
       const res = await fetch(url, {
         method: "DELETE",
       });
@@ -68,11 +70,12 @@ export const Table = ({ showActions, ...rest }: Props) => {
           <th className="p-2 px-3 font-semibold bg-gray-200 dark:bg-black lg:table-cell text-left">
             Clicks
           </th>
-          {showActions ? (
-            <th className="p-2 px-3 font-semibold bg-gray-200 dark:bg-black lg:table-cell text-left">
-              Actions
-            </th>
-          ) : null}
+          <th className="p-2 px-3 font-semibold bg-gray-200 dark:bg-black lg:table-cell text-left">
+            User
+          </th>
+          <th className="p-2 px-3 font-semibold bg-gray-200 dark:bg-black lg:table-cell text-left">
+            Actions
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -92,29 +95,45 @@ export const Table = ({ showActions, ...rest }: Props) => {
                 </a>
               </td>
               <td className={`p-2 px-3 ${isOdd && "bg-gray-100 dark:bg-black"}`}>{url.clicks}</td>
+              <td className={`p-2 px-3 ${isOdd && "bg-gray-100 dark:bg-black"}`}>
+                {url.user ? (
+                  <div className="flex items-center">
+                    {url.user.avatarUrl ? (
+                      <Image
+                        className="rounded-full"
+                        width={30}
+                        height={30}
+                        src={url.user.avatarUrl}
+                      />
+                    ) : null}
 
-              {showActions ? (
-                <td className={`p-2 px-3 ${isOdd && "bg-gray-100 dark:bg-black"}`}>
-                  <button
-                    onClick={() => {
-                      setTempUrl(url);
-                      setModal(Modals.EDIT);
-                    }}
-                    className="underline"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => {
-                      setTempUrl(url);
-                      setModal(Modals.DELETE);
-                    }}
-                    className="underline text-red-600 ml-2"
-                  >
-                    Delete
-                  </button>
-                </td>
-              ) : null}
+                    <p className={`${url.user.avatarUrl && "ml-2"}`}>{url.user.login}</p>
+                  </div>
+                ) : (
+                  <p>None</p>
+                )}
+              </td>
+
+              <td className={`p-2 px-3 ${isOdd && "bg-gray-100 dark:bg-black"}`}>
+                <button
+                  onClick={() => {
+                    setTempUrl(url);
+                    setModal(Modals.EDIT);
+                  }}
+                  className="underline"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => {
+                    setTempUrl(url);
+                    setModal(Modals.DELETE);
+                  }}
+                  className="underline text-red-600 ml-2"
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           );
         })}
@@ -125,6 +144,7 @@ export const Table = ({ showActions, ...rest }: Props) => {
         onClose={() => setModal(null)}
         onSuccess={handleUpdate}
         url={tempUrl}
+        users={users}
       />
 
       <AlertModal

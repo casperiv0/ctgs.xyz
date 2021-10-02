@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { CookieSerializeOptions, serialize, parse } from "cookie";
 import jwt from "jsonwebtoken";
 import { prisma } from "../prisma";
+import { User } from ".prisma/client";
 
 const jwtSecret = String(process.env.JWT_SECRET);
 
@@ -37,8 +38,10 @@ export function signJWT(userId: string, expires: number) {
   );
 }
 
-export async function getSession(req: NextApiRequest | Pick<NextApiRequest, "headers">) {
-  const cookie = _parseCookie(req.headers.cookie ?? "");
+export async function getSession(
+  req: NextApiRequest | Pick<NextApiRequest, "headers" | "cookies">,
+) {
+  const cookie = _parseCookie(req.headers.cookie ?? "", req.cookies["ctgs.xyz-session"]);
   const userId = cookie && parseJWT(cookie);
 
   if (!cookie || !userId) {
@@ -58,8 +61,8 @@ export async function getSession(req: NextApiRequest | Pick<NextApiRequest, "hea
   return user;
 }
 
-function _parseCookie(cookieHeader: string) {
-  return parse(cookieHeader)["ctgs.xyz-session"];
+function _parseCookie(cookieHeader: string, cookie?: string) {
+  return cookie ?? parse(cookieHeader)["ctgs.xyz-session"];
 }
 
 function parseJWT(jwtString: string) {
@@ -70,3 +73,6 @@ function parseJWT(jwtString: string) {
     return null;
   }
 }
+
+export const isAdmin = (user: User | null) =>
+  user && process.env.ADMIN_LOGIN?.toLowerCase() === user.login.toLowerCase();
