@@ -1,10 +1,10 @@
 import * as yup from "yup";
+import { validateSchema } from "@casper124578/utils";
 import type { NextApiRequest, NextApiResponse } from "next";
+import type { Url } from ".prisma/client";
 import { getSession, isAdmin } from "lib/auth/server";
 import { prisma } from "lib/prisma";
 import { parseBody } from "lib/utils";
-import { validateSchema } from "@casper124578/utils";
-import { Url } from ".prisma/client";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getSession(req);
