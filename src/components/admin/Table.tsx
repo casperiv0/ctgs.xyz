@@ -81,17 +81,19 @@ export const Table = ({ users, ...rest }: Props) => {
       <tbody>
         {urls.map((url, idx) => {
           const isOdd = idx % 2 !== 0;
+          const slugSliced = url.slug.length > 85 ? url.slug.substr(0, 85) : url.slug;
+          const urlSliced = url.url.length > 85 ? url.url.substr(0, 85) : url.url;
 
           return (
             <tr className="table-row text-left" key={url.id}>
-              <td className={`p-2 px-3 ${isOdd && "bg-gray-100 dark:bg-black"}`}>
+              <td title={url.slug} className={`p-2 px-3 ${isOdd && "bg-gray-100 dark:bg-black"}`}>
                 <a className="underline" href={`https://ctgs.xyz/${url.slug}`}>
-                  {url.slug}
+                  {slugSliced}
                 </a>
               </td>
-              <td className={`p-2 px-3 ${isOdd && "bg-gray-100 dark:bg-black"}`}>
+              <td title={url.url} className={`p-2 px-3 ${isOdd && "bg-gray-100 dark:bg-black"}`}>
                 <a className="underline" href={url.url}>
-                  {url.url}
+                  {urlSliced}
                 </a>
               </td>
               <td className={`p-2 px-3 ${isOdd && "bg-gray-100 dark:bg-black"}`}>{url.clicks}</td>

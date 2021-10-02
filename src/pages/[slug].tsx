@@ -4,6 +4,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { getThemeFromLocal, updateBodyClass } from "lib/theme";
 import { Button } from "components/Button";
+import { Layout } from "components/Layout";
 
 interface Props {
   data: string;
@@ -21,14 +22,14 @@ export default function Slug({ data }: Props) {
         <meta name="description" content="Whoops! The slug was not found" />
       </Head>
 
-      <main className="bg-gray-50 dark:bg-dark-gray text-black dark:text-gray-300 h-screen flex flex-col justify-center items-center">
+      <Layout className="flex flex-col justify-center items-center">
         <p className="text-4xl">{data}</p>
         <Button className="mt-4">
           <Link href="/">
             <a>Return to home</a>
           </Link>
         </Button>
-      </main>
+      </Layout>
     </>
   );
 }

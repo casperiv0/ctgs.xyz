@@ -13,6 +13,7 @@ import { validate } from "lib/validate";
 import { getSession } from "lib/auth/server";
 import { UrlFields } from "components/UrlForm";
 import { useSession } from "lib/auth/client";
+import { Layout } from "components/Layout";
 
 const INITIAL_VALUES = {
   url: "",
@@ -62,7 +63,7 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-gray-50 dark:bg-dark-gray text-black dark:text-gray-300 h-screen flex items-center justify-center w-screen">
+    <Layout className="flex items-center justify-center w-screen">
       <Head>
         <title>ctgs.xyz</title>
 
@@ -78,7 +79,7 @@ export default function Home() {
         <meta property="og:url" content="https://ctgs.xyz" />
       </Head>
 
-      <main className="w-screen px-5 max-w-3xl xl:w-3/6 xl:px-0">
+      <div className="w-screen px-5 max-w-3xl xl:w-3/6 xl:px-0">
         {router.query.fromGa ? (
           <Info>
             <span className="font-semibold">ctgs.ga</span> has moved to{" "}
@@ -148,8 +149,8 @@ export default function Home() {
             </form>
           )}
         </Formik>
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 }
 

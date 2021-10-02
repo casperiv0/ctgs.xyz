@@ -11,6 +11,7 @@ import { useSession } from "lib/auth/client";
 import { Button } from "components/Button";
 import { NotificationsModal } from "components/modals/Notifications";
 import { useNotifications } from "lib/notifications";
+import { Layout } from "components/Layout";
 
 interface Props {
   user: User | null;
@@ -46,7 +47,7 @@ export default function UserPage({ user, urls, error }: Props) {
   }, [error, user, router]);
 
   return (
-    <main className="bg-gray-50 dark:bg-dark-gray text-black dark:text-gray-300 h-screen pt-24 px-5">
+    <Layout>
       {!pageUser ? (
         <>
           <Head>
@@ -102,7 +103,7 @@ export default function UserPage({ user, urls, error }: Props) {
           />
         </>
       )}
-    </main>
+    </Layout>
   );
 }
 

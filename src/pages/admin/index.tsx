@@ -5,6 +5,7 @@ import type { GetServerSideProps } from "next";
 import type { User } from ".prisma/client";
 import { getSession } from "lib/auth/server";
 import { Table, UrlWithUser } from "components/admin/Table";
+import { Layout } from "components/Layout";
 
 interface Props {
   urls: UrlWithUser[];
@@ -30,9 +31,9 @@ export default function Admin({ users, urls, error }: Props) {
       <Head>
         <title>Admin area - ctgs.xyz</title>
       </Head>
-      <main className="bg-gray-50 dark:bg-dark-gray text-black dark:text-gray-300 h-screen pt-24 px-5">
+      <Layout>
         <Table users={users} urls={urls} />
-      </main>
+      </Layout>
     </>
   );
 }
