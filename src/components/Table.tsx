@@ -161,7 +161,7 @@ export const Table = ({ showActions, ...rest }: Props) => {
       />
 
       <AlertModal
-        onClose={() => setModal(null)}
+        onClose={() => !isDeleting && setModal(null)}
         isOpen={showModal === Modals.DELETE}
         title="Delete shortened url"
       >
