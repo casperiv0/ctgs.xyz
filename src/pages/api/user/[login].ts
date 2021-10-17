@@ -16,6 +16,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(404).send("User Not Found");
   }
 
+  if (user.banned) {
+    return res.status(403).send("User is banned");
+  }
+
   if (!session && !user.isPublic) {
     return res.status(403).send("Profile Not Public");
   }

@@ -65,6 +65,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 
+  if (dbUser.banned) {
+    return res.status(403).send("User is banned.");
+  }
+
   // cookie expires after 24 hours
   const expires = 60 * 60 * 1000 * 24;
   const token = signJWT(dbUser.id, expires);

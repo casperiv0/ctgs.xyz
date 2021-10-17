@@ -40,6 +40,7 @@ export function signJWT(userId: string, expires: number) {
 
 export async function getSession(
   req: NextApiRequest | Pick<NextApiRequest, "headers" | "cookies">,
+  notFoundOnBan = false,
 ) {
   const cookie = _parseCookie(req.headers.cookie ?? "", req.cookies["ctgs.xyz-session"]);
   const userId = cookie && parseJWT(cookie);
@@ -58,7 +59,11 @@ export async function getSession(
     return null;
   }
 
-  return user;
+  if (user.banned && notFoundOnBan) {
+    return null;
+  }
+
+  return { ...user, createdAt: new Date(user.createdAt).toString() };
 }
 
 function _parseCookie(cookieHeader: string, cookie?: string) {
@@ -74,5 +79,5 @@ function parseJWT(jwtString: string) {
   }
 }
 
-export const isAdmin = (user: User | null) =>
+export const isAdmin = (user: Pick<User, "login"> | null) =>
   user && process.env.ADMIN_LOGIN?.toLowerCase() === user.login.toLowerCase();

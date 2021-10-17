@@ -6,6 +6,8 @@ import type { User } from ".prisma/client";
 import { getSession } from "lib/auth/server";
 import { Table, UrlWithUser } from "components/admin/Table";
 import { Layout } from "components/Layout";
+import { UserTable } from "components/admin/UserTable";
+import { Button } from "components/Button";
 
 interface Props {
   urls: UrlWithUser[];
@@ -13,8 +15,14 @@ interface Props {
   error: string | null;
 }
 
+const enum Tab {
+  Urls,
+  Users,
+}
+
 export default function Admin({ users, urls, error }: Props) {
   const router = useRouter();
+  const [tab, setTab] = React.useState<Tab>(Tab.Urls);
 
   React.useEffect(() => {
     if (error && error === "Forbidden") {
@@ -32,7 +40,11 @@ export default function Admin({ users, urls, error }: Props) {
         <title>Admin area - ctgs.xyz</title>
       </Head>
       <Layout>
-        <Table users={users} urls={urls} />
+        <div className="space-x-2">
+          <Button onClick={() => setTab(Tab.Urls)}>Urls</Button>
+          <Button onClick={() => setTab(Tab.Users)}>Users</Button>
+        </div>
+        {tab === Tab.Urls ? <Table users={users} urls={urls} /> : <UserTable users={users} />}
       </Layout>
     </>
   );

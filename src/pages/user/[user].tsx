@@ -23,6 +23,7 @@ const errors = {
   "Not Found": "The profile you're looking for was not found",
   "Profile Not Public":
     "This profile is set to private. You cannot view this user's urls. You are able to use them.",
+  "User is banned": "This user is banned from this site.",
 };
 
 enum Modals {

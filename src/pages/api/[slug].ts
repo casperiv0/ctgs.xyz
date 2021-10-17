@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     },
     // slug is the url id for this method.
     DELETE: async () => {
-      const session = await getSession(req);
+      const session = await getSession(req, true);
       if (!session) {
         return res.status(401).send("Unauthorized");
       }
@@ -62,7 +62,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.send("OK");
     },
     PUT: async () => {
-      const session = await getSession(req);
+      const session = await getSession(req, true);
       if (!session) {
         return res.status(401).send("Unauthorized");
       }

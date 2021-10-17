@@ -12,6 +12,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const body = parseBody(req);
 
   const session = await getSession(req);
+
+  if (!session) {
+    return res.status(401).send("Must be authorized. Please login to continue.");
+  }
+
   const { status, error, slugified } = await validateUrlBody(body);
 
   if (error) {
