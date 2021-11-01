@@ -39,7 +39,7 @@
     "@types/react-modal": "^3.12.1",
     "autoprefixer": "^10.3.7",
     "eslint": "^7.32.0",
-    "postcss": "^8.3.9",
+    "postcss": "^8.3.11",
     "preact": "^10.5.14",
     "prettier": "^2.4.1",
     "sass": "^1.42.1",
