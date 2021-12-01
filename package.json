@@ -26,7 +26,7 @@
     "react-modal": "^3.14.3",
     "slugify": "^1.6.1",
     "yup": "^0.32.9",
-    "zod": "^3.9.8"
+    "zod": "^3.11.6"
   },
   "devDependencies": {
     "@casper124578/eslint-config": "^1.0.0",
