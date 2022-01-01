@@ -40,7 +40,7 @@
     "autoprefixer": "^10.4.0",
     "eslint": "^7.32.0",
     "postcss": "^8.3.11",
-    "preact": "^10.5.15",
+    "preact": "^10.6.4",
     "prettier": "^2.4.1",
     "sass": "^1.42.1",
     "tailwindcss": "^2.2.16",
